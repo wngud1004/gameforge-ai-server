@@ -7,9 +7,9 @@ import random
 # Show title and description.
 st.title("💬 Chatbot")
 st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
+    "이건 gamefoge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요!"
+    "오늘의 추천 게임, 공지사항, 문의사항 등 다 가능합니다."
+    "재밌는 채팅하시고 gamefoge에서 관련 게임을 구매해보세요!"
 )
 
 #FastAPI인스턴스 생성
@@ -23,6 +23,11 @@ async def test():
         "address": "Tokyo",
         "age": 30
         }
+
+@app.get('/text')
+def test(request):
+    return {'test':'text'}
+
 
 # Create an OpenAI client.
 client = OpenAI(api_key=st.secrets["openai_api_key"])

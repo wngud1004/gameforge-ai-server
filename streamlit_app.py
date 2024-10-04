@@ -15,19 +15,6 @@ st.write(
 #FastAPI인스턴스 생성
 app = FastAPI()
 
-@app.get("/test")
-async def test():
-    return {
-        "id": random.randint(1,10), #지정한 범위 안에서 랜덤한 수를 되돌려 준다
-        "name": "name",
-        "address": "Tokyo",
-        "age": 30
-        }
-
-@app.get('/text')
-def test(request):
-    return {'test':'text'}
-
 
 # Create an OpenAI client.
 client = OpenAI(api_key=st.secrets["openai_api_key"])

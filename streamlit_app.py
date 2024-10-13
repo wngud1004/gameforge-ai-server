@@ -1,10 +1,13 @@
 import streamlit as st
 from openai import OpenAI
 from fastapi import FastAPI
+import requests
+import json
 import random
 
 
 # Show title and description.
+# https://gameforge-ai-server.streamlit.app/
 st.title("💬 Chatbot")
 st.write(
     "이건 gamefoge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요!"
@@ -71,6 +74,7 @@ base_data = '''
 }
 
 '''
+
 custom_prompt += f" 여기 사전 정보가 있습니다: {base_data}"
 
 # Create a session state variable to store the chat messages. This ensures that the

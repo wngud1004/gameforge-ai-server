@@ -21,13 +21,13 @@ app = FastAPI()
 # Create an OpenAI client.
 client = OpenAI(api_key=st.secrets["openai_api_key"])
 
-# URL 쿼리 매개변수에서 인증 토큰을 가져옵니다.
+
 query_params = st.experimental_get_query_params()
 auth_token = query_params.get("token", [None])[0]  # 'token' 매개변수를 가져옴
 
 if auth_token:
     st.session_state.auth_token = auth_token  # 인증 토큰을 세션 상태에 저장
-    st.write("인증 토큰이 성공적으로 받아졌습니다.")
+    st.write("인증 토큰이 성공적으로 받아졌습니다." + auth_token)
 else:
     st.write("인증 토큰을 찾을 수 없습니다.")
 

@@ -7,7 +7,7 @@ import random
 
 
 # Show title and description.
-# https://gameforge-ai-server.streamlit.app/
+# https://ludorium.store/api/user/login
 st.title("💬 Chatbot")
 st.write(
     "이건 gamefoge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요!"
@@ -15,12 +15,21 @@ st.write(
     "재밌는 채팅하시고 gamefoge에서 관련 게임을 구매해보세요!"
 )
 
-#FastAPI인스턴스 생성
 app = FastAPI()
 
 
 # Create an OpenAI client.
 client = OpenAI(api_key=st.secrets["openai_api_key"])
+
+# URL 쿼리 매개변수에서 인증 토큰을 가져옵니다.
+query_params = st.experimental_get_query_params()
+auth_token = query_params.get("token", [None])[0]  # 'token' 매개변수를 가져옴
+
+if auth_token:
+    st.session_state.auth_token = auth_token  # 인증 토큰을 세션 상태에 저장
+    st.write("인증 토큰이 성공적으로 받아졌습니다.")
+else:
+    st.write("인증 토큰을 찾을 수 없습니다.")
 
 custom_prompt = "당신은 주어진 데이터를 바탕으로 유용하고 도움이되는 정확한 답변을 제공하는 유용한 어시스턴트입니다."
 base_data = '''

@@ -160,6 +160,7 @@ if prompt := st.chat_input("무슨 일이신가요?"):
     # 응답 처리 (텍스트 + 이미지 URL을 포함할 수 있음)
     with st.chat_message("assistant"):
         response_content = ""
+        
         for chunk in stream:
             # 'choices' 키를 통해 접근해야 함
             if "choices" in chunk:
@@ -171,9 +172,14 @@ if prompt := st.chat_input("무슨 일이신가요?"):
 
         # 응답에 이미지 URL이 포함된 경우, 이미지를 출력
         if "image_url" in response_content:  # 이미지 URL이 포함된 경우를 가정
-            # 이미지 URL을 추출하는 간단한 로직
-            image_url = response_content.split("image_url: ")[-1].split()[0]
-            st.image(image_url)  # 이미지를 출력
+            # 이미지 URL을 추출하는 정확한 로직
+            import re
+            image_url_match = re.search(r"image_url:\s*(\S+)", response_content)
+            
+            if image_url_match:
+                image_url = image_url_match.group(1)  # 이미지 URL 추출
+                st.image(image_url)  # 이미지를 출력
+
 
 
     with st.chat_message("assistant"):

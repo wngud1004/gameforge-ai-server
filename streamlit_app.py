@@ -42,15 +42,10 @@ if auth_token:
 
     if response.status_code == 200:
         user_data = response.json()
-        print("사용자 정보:")
-        print(f"이메일: {user_data['data']['email']}, 
-              닉네임: {user_data['data']['nickname']}, 
-              이름: {user_data['data']['name']}, 
-              가입 날짜: {user_data['data']['regDate']}, 
-              보상 포인트: {user_data['data']['rewardPoints']}")
+
         user_data = user_data['data']
     else:
-        print(f"사용자 정보 API 요청에 실패했습니다. 상태 코드: {response.status_code}")
+        # print(f"사용자 정보 API 요청에 실패했습니다. 상태 코드: {response.status_code}")
         user_data = "현재 사용자 데이터를 불러오는 것에 실패함"
 
     # 사용자 구매 게임 요청
@@ -59,23 +54,19 @@ if auth_token:
     if user_library_response.status_code == 200:
         library_data = user_library_response.json()
         
-        # 사용자 구매 게임 목록 출력
-        print("구매 목록:")
-        print(library_data['data'])
+        # 사용자 구매 게임 목록
         library_data = library_data['data']
     else:
         library_data = "현재 사용자가 구매한 게임 정보를 불러오는 것에 실패함"
 
 
-    # 전체 게임 목록
+    # 전체 게임 목록 요청
     game_list_response = requests.get(game_list_url, headers=headers, verify=False)
 
     if game_list_response.status_code == 200:
         game_data = game_list_response.json()
         
-        # 전체 게임 목록 출력
-        print("게임 목록 :")
-        print(game_data['data'])
+        # 전체 게임 목록
         game_data = game_data['data']
     else:
         game_data = "게임 목록을 불러오는 것에 실패함"

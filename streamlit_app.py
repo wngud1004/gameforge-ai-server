@@ -28,9 +28,9 @@ auth_token = query_params.get("token", [None])[0]  # 'token' 매개변수를 가
 
 if auth_token:
     st.session_state.auth_token = auth_token  # 인증 토큰을 세션 상태에 저장
-    log_message("인증 토큰이 성공적으로 받아졌습니다. " + auth_token)
+    # log_message("인증 토큰이 성공적으로 받아졌습니다. " + auth_token)
 else:
-    log_message("인증 토큰을 찾을 수 없습니다.")
+    log_message("로그인 하지 않은 상태입니다.")
 
 # Create an OpenAI client.
 client = OpenAI(api_key=st.secrets["openai_api_key"])

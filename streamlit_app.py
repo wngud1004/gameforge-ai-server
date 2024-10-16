@@ -156,10 +156,8 @@ if prompt := st.chat_input("무슨 일이신가요?"):
         ],
         stream=True,
     )
-
-    # 응답 처리 (텍스트 + 이미지 URL을 포함할 수 있음)
     with st.chat_message("assistant"):
-        response_content = ""
+        response_content = ""  # 응답 내용을 저장할 변수
         
         for chunk in stream:
             # 'choices' 키를 통해 접근해야 함
@@ -167,21 +165,16 @@ if prompt := st.chat_input("무슨 일이신가요?"):
                 delta_content = chunk.choices[0].delta.get("content", "")
                 response_content += delta_content
 
+        # 이미지 URL을 찾기 위한 정규 표현식
+        import re
+        image_url_pattern = r"(https?://\S+\.(?:jpg|jpeg|png|gif))"
+        image_urls = re.findall(image_url_pattern, response_content)
+
         # 응답 텍스트를 출력
         st.markdown(response_content)
 
-        # 응답에 이미지 URL이 포함된 경우, 이미지를 출력
-        if "image_url" in response_content:  # 이미지 URL이 포함된 경우를 가정
-            # 이미지 URL을 추출하는 정확한 로직
-            import re
-            image_url_match = re.search(r"image_url:\s*(\S+)", response_content)
-            
-            if image_url_match:
-                image_url = image_url_match.group(1)  # 이미지 URL 추출
+        # 이미지가 포함된 경우, 이미지를 출력
+        if image_urls:
+            for image_url in image_urls:
                 st.image(image_url)  # 이미지를 출력
-
-
-
-    with st.chat_message("assistant"):
-        response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": response})

@@ -4,10 +4,11 @@ from fastapi import FastAPI
 import requests
 import json
 import random
+import logging
 
 
 # Show title and description.
-# https://ludorium.store/api/user/login
+# https://gameforge-ai-server.streamlit.app/?token=YOUR_ACCESS_TOKEN
 st.title("💬 Chatbot")
 st.write(
     "이건 gamefoge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요!"
@@ -16,23 +17,51 @@ st.write(
 )
 
 app = FastAPI()
+logging.basicConfig(level=logging.INFO)  # 로그 레벨을 설정합니다 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 
-
-# Create an OpenAI client.
-client = OpenAI(api_key=st.secrets["openai_api_key"])
-
+# 로그 메시지 전송 함수
+def log_message(message):
+    logging.info(message)
 
 query_params = st.experimental_get_query_params()
 auth_token = query_params.get("token", [None])[0]  # 'token' 매개변수를 가져옴
 
 if auth_token:
     st.session_state.auth_token = auth_token  # 인증 토큰을 세션 상태에 저장
-    st.write("인증 토큰이 성공적으로 받아졌습니다." + auth_token)
+    log_message("인증 토큰이 성공적으로 받아졌습니다. " + auth_token)
 else:
-    st.write("인증 토큰을 찾을 수 없습니다.")
+    log_message("인증 토큰을 찾을 수 없습니다.")
 
-custom_prompt = "당신은 주어진 데이터를 바탕으로 유용하고 도움이되는 정확한 답변을 제공하는 유용한 어시스턴트입니다."
-base_data = '''
+# Create an OpenAI client.
+client = OpenAI(api_key=st.secrets["openai_api_key"])
+
+
+
+# https://ludorium.store/api/user/login
+
+user_info_url = "https://ludorium.store/api/user/mypage"
+user_library_url = "https://ludorium.store/api/user/library/list"
+game_list_url = ""
+headers = {
+    "Authorization": f"Bearer {auth_token}"  # Bearer 방식으로 Access Token 전달
+}
+
+# 사용자 정보 GET 요청
+response = requests.get(user_info_url, headers=headers, verify=False)
+            
+if response.status_code == 200:
+    data = response.json()
+                
+    # 사용자 목록 출력
+    print(data)
+    print("사용자 목록 (페이지 1):")
+    for user in data['data']['content']:  # 'content' 안에 사용자 데이터가 있다고 가정
+        print(f"이메일: {user['email']}, 닉네임: {user['nickname']}, 가입 날짜: {user['regDate']}, 역할: {user['role']}")
+    else:
+        print(f"사용자 목록 API 요청에 실패했습니다. 상태 코드: {response.status_code}")
+
+custom_prompt = "당신은 주어진 데이터를 바탕으로 유용하고 도움이되는 정확한 답변을 제공하는 게임 어시스턴트입니다."
+game_data = '''
 {
 "Notice": [
     {
@@ -83,8 +112,11 @@ base_data = '''
 }
 
 '''
-
-custom_prompt += f" 여기 사전 정보가 있습니다: {base_data}"
+user_data = ""
+library_data = ""
+custom_prompt += f" 여기 우리가 가진 게임 정보가 있습니다: {game_data}"
+custom_prompt += f" 이건 사용자 데이터 입니다. {game_data}"
+custom_prompt += f" 사용자가 구매한 게임 데이터 입니다. {game_data}"
 
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.

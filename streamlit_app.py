@@ -125,6 +125,7 @@ else:
 custom_prompt += f" 여기 우리가 가진 게임 정보가 있습니다: {game_data}"
 custom_prompt += f" 이건 사용자 데이터 입니다. {user_data}"
 custom_prompt += f" 사용자가 구매한 게임 데이터 입니다. {library_data}"
+custom_prompt += f" 해당 게임으로 이동하는 링크를 만드는 법은 https://genu99.github.io/Graduation-work/gameDetail.html?gameId=여기에 gameId를 넣는 것"
 
 #채팅 메시지를 저장할 세션 변수 생성
 if "messages" not in st.session_state:
@@ -159,4 +160,5 @@ if prompt := st.chat_input("무슨 일이신가요?"):
 
     with st.chat_message("assistant"):
         response = st.write_stream(stream)
+
     st.session_state.messages.append({"role": "assistant", "content": response})

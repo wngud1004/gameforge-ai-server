@@ -54,7 +54,7 @@ if response.status_code == 200:
                 
     # 사용자 목록 출력
     print(data)
-    print("사용자 목록 (페이지 1):")
+    print("사용자 정보")
     for user in data['data']['content']:  # 'content' 안에 사용자 데이터가 있다고 가정
         print(f"이메일: {user['email']}, 닉네임: {user['nickname']}, 가입 날짜: {user['regDate']}, 역할: {user['role']}")
     else:
@@ -114,30 +114,29 @@ game_data = '''
 '''
 user_data = ""
 library_data = ""
-custom_prompt += f" 여기 우리가 가진 게임 정보가 있습니다: {game_data}"
-custom_prompt += f" 이건 사용자 데이터 입니다. {game_data}"
-custom_prompt += f" 사용자가 구매한 게임 데이터 입니다. {game_data}"
+custom_prompt += f" 여기 우리가 가진 게임 정보가 있습니다: {game_data['data']}"
+custom_prompt += f" 이건 사용자 데이터 입니다. {user_data['data']}"
+custom_prompt += f" 사용자가 구매한 게임 데이터 입니다. {library_data['data']}"
 
-# Create a session state variable to store the chat messages. This ensures that the
-# messages persist across reruns.
+#채팅 메시지를 저장할 세션 변수 생성
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display the existing chat messages via `st.chat_message`.
+# 기존 채팅 메시지 표시
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Create a chat input field to allow the user to enter a message. This will display
-# automatically at the bottom of the page.
+# 채팅 입력 필드 생성
+# 페이지 하단에 자동으로 표시
 if prompt := st.chat_input("무슨 일이신가요?"):
 
-    # Store and display the current prompt.
+    # 현재 프롬프트를 저장하고 표시
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate a response using the OpenAI API.
+    # OpenAI API를 이용한 응답 생성
     stream = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -150,8 +149,6 @@ if prompt := st.chat_input("무슨 일이신가요?"):
         stream=True,
     )
 
-    # Stream the response to the chat using `st.write_stream`, then store it in 
-    # session state.
     with st.chat_message("assistant"):
         response = st.write_stream(stream)
     st.session_state.messages.append({"role": "assistant", "content": response})

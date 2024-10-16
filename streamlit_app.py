@@ -10,6 +10,7 @@ import logging
 st.title("💬 GameForge Chatbot")
 
 # https://ludorium.store/api/user/login
+login_url = "https://ludorium.store/api/admin/auth/login" # 관리자 로그인
 user_info_url = "https://ludorium.store/api/user/mypage"
 user_library_url = "https://ludorium.store/api/user/library/list"
 game_list_url = "https://ludorium.store/api/user/game/0/list"
@@ -84,9 +85,41 @@ else:
     "재밌는 채팅하시고 gamefoge에서 관련 게임을 구매해보세요!"
     )
     log_message("인증 토큰을 찾을 수 없습니다.")
+
+    # 로그인 정보
+    login_data = {
+        "email": "admin",
+        "password": "admin"
+    }
+
+    # 로그인 요청
+    login_response = requests.post(login_url, json=login_data, verify=False)
+
+    if login_response.status_code == 200:
+        
+        # Access Token 추출
+        access_token = login_response.json()['data']['accessToken']
+        print("로그인 성공. Access Token:", access_token)
+
+        # 1. 사용자 정보 요청
+        headers = {
+            "Authorization": f"Bearer {access_token}"  # Bearer 방식으로 Access Token 전달
+        }
+
+        # 전체 게임 목록
+        game_list_response = requests.get(game_list_url, headers=headers, verify=False)
+
+        if game_list_response.status_code == 200:
+            game_data = game_list_response.json()
+
+            game_data = game_data['data']
+        else:
+            game_data = "사이트에서 게임 목록을 불러오지 못함"
+    else:
+        game_data = "게임 목록을 불러오는 것에 실패함"
+
     user_data = "현재 사용자가 로그인하기 전 상태라 사용자 정보 없음"
     library_data = "현재 사용자가 로그인하기 전 상태라 구매한 게임 정보 없음"
-    game_data = "사이트에 게임 목록 없음"
 
 
 custom_prompt += f" 여기 우리가 가진 게임 정보가 있습니다: {game_data}"

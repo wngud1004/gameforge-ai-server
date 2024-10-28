@@ -31,11 +31,13 @@ query_params = st.experimental_get_query_params()
 auth_token = query_params.get("token", [None])[0]  # 'token' 매개변수를 가져옴
 
 if auth_token:
-    st.write(
-    "이건 gameforge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요! \n"
-    "오늘의 추천 게임, 공지사항, 문의사항 등 다 가능합니다. \n"
-    "재밌는 채팅하시고 gameforge에서 관련 게임을 구매해보세요!"
+    st.markdown(
+        "이건 gameforge 사이트의 챗봇입니다. 모르는 것을 물어보고 원하는 답을 얻어보세요! <br>"
+        "오늘의 추천 게임, 공지사항, 문의사항 등 다 가능합니다. <br>"
+        "재밌는 채팅하시고 gameforge에서 관련 게임을 구매해보세요!",
+        unsafe_allow_html=True
     )
+
 
     st.session_state.auth_token = auth_token  # 인증 토큰을 세션 상태에 저장
     log_message("인증 토큰이 성공적으로 받아졌습니다. " + auth_token)
